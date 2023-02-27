@@ -46,11 +46,7 @@ function workingMemory(e) {
         return arg;
     }
     if (memory.length === 0 && isNaN(arg)){
-        console.log('invalid input: ' + arg);
-        return '';
-    }
-    if (memory.length !== 3 && arg === '='){
-        console.log('invalid input: ' + arg);
+        console.log('invalid input: ' + arg); 
         return '';
     }
     if (memory[memory.length - 1].includes('.') && arg === '.'){
@@ -72,9 +68,6 @@ function workingMemory(e) {
         memory.push(arg);
         return arg;
     }
-    if (memory.length == 3 && arg === '='){
-        return operate();
-    }
     //operator errors
     return memory[memory.length - 1];
 }
@@ -90,16 +83,20 @@ const digits = document.querySelectorAll('.digit');
 digits.forEach((digit) => digit.addEventListener('click', toDisplay));
 const operators = document.querySelectorAll('.operator');
 operators.forEach((arg) => arg.addEventListener('click', toDisplay));
-const equals = document.querySelector('#equals');
-equals.addEventListener('click', toDisplay);
 const decimal = document.querySelector('#decimal');
 decimal.addEventListener('click', toDisplay);
+const equals = document.querySelector('#equals');
+equals.addEventListener('click', () => {
+    if (memory.length === 3){
+        display.innerHTML = operate();
+    }
+});
 
 const clear = document.querySelector('#clear');
 clear.addEventListener('click', () => {
     memory = [];
     display.innerHTML = '';
-})
+});
 
 const backspace = document.querySelector('#backspace');
 backspace.addEventListener('click', () => {
@@ -112,14 +109,8 @@ backspace.addEventListener('click', () => {
 const negate = document.querySelector('#negate');
 negate.addEventListener('click', () => {
     if (memory.length != 0 && !(isNaN(memory[memory.length - 1]))){
-        let number = parseInt(memory[memory.length - 1]);
+        let number = parseFloat(memory[memory.length - 1]);
         memory[memory.length - 1] = (number * -1).toString();
         display.innerHTML =  memory[memory.length - 1];
     }
-})
-
-
-// memory[0] = 0.5;
-// memory[1] = '+';
-// memory[2] = '1';
-// console.log(operate());
+});
