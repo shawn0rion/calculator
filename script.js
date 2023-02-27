@@ -1,5 +1,4 @@
 function add (a, b){
-    console.log(parseInt(a), b);
     return parseFloat(a) + parseFloat(b);
 }
 
@@ -12,6 +11,9 @@ function multiply (a, b){
 }
 
 function divide (a, b){
+    if (b == 0){
+        return "ERROR";
+    }
     return parseFloat(a) / parseFloat(b);
 }
 
@@ -26,8 +28,12 @@ function operate(){
         '/': divide(a, b),
     };
     let result = calc[operator];
+    if (result === "ERROR"){
+        memory = [];
+        return result;
+    }
     memory = [];
-    memory.push(Math.round((result + Number.EPSILON) * 100) / 100);
+    memory.push((Math.round((result + Number.EPSILON) * 100) / 100).toString());
     return Math.round((result + Number.EPSILON) * 100) / 100;
 }
 
@@ -35,14 +41,19 @@ function workingMemory(e) {
     let arg = e.target.innerHTML;
 
     // [2] -> = -> [2]
-    if (memory.length != 3 && arg == '='){
-        console.log('invalid input: ' + arg);
-    }
     if (memory.length < 1 && !(isNaN(arg))){
         memory.push(arg);
         return arg;
     }
-    if (memory[memory.length - 1].includes('.') && arg == '.'){
+    if (memory.length === 0 && isNaN(arg)){
+        console.log('invalid input: ' + arg);
+        return '';
+    }
+    if (memory.length !== 3 && arg === '='){
+        console.log('invalid input: ' + arg);
+        return '';
+    }
+    if (memory[memory.length - 1].includes('.') && arg === '.'){
         console.log('invalid input: ' + arg);
         return memory[memory.length - 1];
     }
@@ -50,10 +61,8 @@ function workingMemory(e) {
     // [2] -> 2 -> [22]
     if ((!(isNaN(arg)) || arg === '.') && !(isNaN((memory[memory.length - 1])))){
         return memory[memory.length - 1] += arg;
-        // return memory[memory.length - 1];
     }
     // [22] -> + -> [22, +]
-    // does not accept '='
     if (e.target.className === 'operator' && !(isNaN(memory[memory.length-1]))){
         memory.push(arg);
         return arg;
@@ -67,11 +76,7 @@ function workingMemory(e) {
         return operate();
     }
     //operator errors
-    if (memory.length == 0){
-        return '';
-    } else{
-        return memory[memory.length - 1];
-    }
+    return memory[memory.length - 1];
 }
 
 function toDisplay (e) {
@@ -80,6 +85,7 @@ function toDisplay (e) {
 }
 
 let memory = []
+const display = document.getElementById('display');
 const digits = document.querySelectorAll('.digit');
 digits.forEach((digit) => digit.addEventListener('click', toDisplay));
 const operators = document.querySelectorAll('.operator');
@@ -89,7 +95,29 @@ equals.addEventListener('click', toDisplay);
 const decimal = document.querySelector('#decimal');
 decimal.addEventListener('click', toDisplay);
 
-const display = document.getElementById('display');
+const clear = document.querySelector('#clear');
+clear.addEventListener('click', () => {
+    memory = [];
+    display.innerHTML = '';
+})
+
+const backspace = document.querySelector('#backspace');
+backspace.addEventListener('click', () => {
+    if (memory.length != 0 && !(isNaN(memory[memory.length - 1]))){
+        memory[memory.length - 1] = memory[memory.length - 1].slice(0, -1);
+        display.innerHTML = memory[memory.length - 1];
+    }
+});
+
+const negate = document.querySelector('#negate');
+negate.addEventListener('click', () => {
+    if (memory.length != 0 && !(isNaN(memory[memory.length - 1]))){
+        let number = parseInt(memory[memory.length - 1]);
+        memory[memory.length - 1] = (number * -1).toString();
+        display.innerHTML =  memory[memory.length - 1];
+    }
+})
+
 
 // memory[0] = 0.5;
 // memory[1] = '+';
