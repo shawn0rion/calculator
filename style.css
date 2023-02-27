@@ -27,6 +27,7 @@ body{
 
 .row {
     display: flex;
+    align-items: center;
     width: 18rem;
 }
 button{
@@ -44,4 +45,14 @@ button{
 .operator{
     background-color: #ff8d00;
 }
-
+#equals {
+    background-color: #ff8d00;
+}
+.extend{
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    width: 8.4rem;
+    border-radius: 3rem;
+    height: 3.8rem;
+}
