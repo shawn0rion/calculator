@@ -18,6 +18,7 @@ function divide (a, b){
 }
 
 function operate(){
+    console.log('OPERATE')
     let a = memory[0];
     let operator = memory[1];
     let b = memory[2];
@@ -37,7 +38,13 @@ function operate(){
     return Math.round((result + Number.EPSILON) * 100) / 100;
 }
 
+// store numbers and operators in an array until operate can be called
 function workingMemory(arg) {
+    //force user to operate or clear or backspace
+    if (memory.length == 3){
+        return memory[memory.length - 1];
+    }
+
     // [2] -> = -> [2]
     if (memory.length < 1 && !(isNaN(arg))){
         memory.push(arg);
@@ -45,12 +52,15 @@ function workingMemory(arg) {
     }
     // [] -> + -> []
     if (memory.length === 0 && isNaN(arg)){
-        console.log('invalid input: ' + arg); 
         return '';
     }
     // [2] -> 2 -> [22]
     if (!(isNaN(arg)) && !(isNaN((memory[memory.length - 1])))){
         return memory[memory.length - 1] += arg;
+    }
+    // if the user changes the operator before inputing another number
+    if (isNaN((memory[memory.length - 1])) && isNaN(arg)){
+        return memory[memory.length - 1] = arg;
     }
     // [22] -> + -> [22, +]
     if (!(isNaN(memory[memory.length-1]))){
@@ -62,25 +72,26 @@ function workingMemory(arg) {
         memory.push(arg);
         return arg;
     }
+
     // potential operator errors
     return memory[memory.length - 1];
-}
-
-function toDisplay (e) {
-    arg = e.target.innerHTML;
-    display.innerHTML = workingMemory(arg);
 }
 
 let memory = []
 const display = document.getElementById('display');
 const digits = document.querySelectorAll('.digit');
-digits.forEach((digit) => digit.addEventListener('click', toDisplay));
 const operators = document.querySelectorAll('.operator');
-operators.forEach((arg) => arg.addEventListener('click', toDisplay));
+
+// mouse input for digits and operators
+digits.forEach((digit) => digit.addEventListener('click', () => {
+    display.innerHTML = workingMemory(digit.innerHTML);
+}));
+operators.forEach((operator) => operator.addEventListener('click', () => {
+    display.innerHTML = workingMemory(operator.innerHTML);
+}))
 
 // keyboard input
 document.addEventListener('keydown', function onEvent(e) {
-    console.log(e.key)
     if (!(isNaN(e.key))){
         display.innerHTML = workingMemory(e.key);
     }
@@ -102,10 +113,10 @@ document.addEventListener('keydown', function onEvent(e) {
     if (e.key == "_"){
         negateAction(e.key);
     }
-
+    console.log(memory);
 })
 
-// mouse input
+// mouse input for not operator and not digit
 const decimal = document.querySelector('#decimal');
 decimal.addEventListener('click', decimalAction);
 
@@ -151,9 +162,14 @@ function clearAction () {
 }
 
 function backspaceAction() {
-    if (memory.length != 0 && !(isNaN(memory[memory.length - 1]))){
-        memory[memory.length - 1] = memory[memory.length - 1].slice(0, -1);
-        display.innerHTML = memory[memory.length - 1];
+    if (memory.length != 0) {
+        if (memory[memory.length - 1]){
+            memory[memory.length - 1] = memory[memory.length - 1].slice(0, -1);
+            display.innerHTML = memory[memory.length - 1];
+        }
+        if (memory[memory.length - 1] == ''){
+            memory.pop(); //in case backspace clears most recent memory slot
+        }
     }
 }
 
