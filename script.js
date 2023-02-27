@@ -38,14 +38,15 @@ function workingMemory(e) {
     if (memory.length != 3 && arg == '='){
         console.log('invalid input: ' + arg);
     }
-    if (memory[memory.length - 1].includes('.') && arg == '.'){
-        console.log('invalid input: ' + arg);
-        return memory[memory.length - 1];
-    }
     if (memory.length < 1 && !(isNaN(arg))){
         memory.push(arg);
         return arg;
     }
+    if (memory[memory.length - 1].includes('.') && arg == '.'){
+        console.log('invalid input: ' + arg);
+        return memory[memory.length - 1];
+    }
+
     // [2] -> 2 -> [22]
     if ((!(isNaN(arg)) || arg === '.') && !(isNaN((memory[memory.length - 1])))){
         return memory[memory.length - 1] += arg;
